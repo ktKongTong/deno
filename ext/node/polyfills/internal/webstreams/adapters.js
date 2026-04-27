@@ -1,6 +1,5 @@
 // deno-lint-ignore-file
 // Copyright 2018-2026 the Deno authors. MIT license.
-import { destroy } from "ext:deno_node/internal/streams/destroy.js";
 import finished from "ext:deno_node/internal/streams/end-of-stream.js";
 import {
   isDestroyed,
@@ -25,7 +24,12 @@ import {
 } from "ext:deno_node/internal/errors.ts";
 import process from "node:process";
 import { Buffer } from "node:buffer";
-import { Duplex, Readable, Writable } from "node:stream";
+import {
+  Duplex,
+  Readable,
+  Writable,
+  destroy,
+} from "node:stream";
 
 function isWritableStream(object) {
   return object instanceof WritableStream;
@@ -559,7 +563,7 @@ export function newReadableStreamFromStreamReadable(
 
     cancel(reason) {
       isCanceled = true;
-      destroy.call(streamReadable, reason);
+      destroy(streamReadable, reason);
     },
   };
   if (isByteStream) {
